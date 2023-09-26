@@ -1,0 +1,90 @@
+[
+    {
+        "id": "ac37ac1ae6cdff97",
+        "type": "mqtt in",
+        "z": "da4b9c4dc2e1cb7f",
+        "name": "",
+        "topic": "stat/+/STATUS10",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "2430e2d7392a07ab",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 140,
+        "y": 240,
+        "wires": [
+            [
+                "ddadda6141255eaa"
+            ]
+        ]
+    },
+    {
+        "id": "292786b399cab4cc",
+        "type": "function",
+        "z": "da4b9c4dc2e1cb7f",
+        "name": "create tele msg",
+        "func": "var str = msg.topic;\nvar array = str.split('/')\nvar myDevice = array[1];\n\nif (!flow.get(\"tasmota_devices\")) {\n    flow.set(\"tasmota_devices\", new Set());\n}\nflow.get(\"tasmota_devices\").add(myDevice);\n\nvar sensorData = {\n    device: myDevice,\n    event: 'tele',\n    power: msg.payload.StatusSNS.ENERGY.Power,\n    today: msg.payload.StatusSNS.ENERGY.Today,\n    yesterday: msg.payload.StatusSNS.ENERGY.Yesterday,\n    total: msg.payload.StatusSNS.ENERGY.Total\n}\nmsg.payload = sensorData;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 240,
+        "wires": [
+            [
+                "da498010099f8584",
+                "e8800681f6af2598"
+            ]
+        ]
+    },
+    {
+        "id": "ddadda6141255eaa",
+        "type": "json",
+        "z": "da4b9c4dc2e1cb7f",
+        "name": "jsonConv",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 400,
+        "y": 240,
+        "wires": [
+            [
+                "292786b399cab4cc"
+            ]
+        ]
+    },
+    {
+        "id": "2430e2d7392a07ab",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "hier ist mein IP",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    }
+]
